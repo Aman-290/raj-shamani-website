@@ -1,19 +1,42 @@
-import { motion } from 'motion/react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
+import { useEffect } from 'react';
 import InteractiveGroup from './InteractiveGroup';
 
 export default function Hero() {
+  // Spring-backed mouse Y tracker for the mic
+  const rawY = useMotionValue(0);
+  const springY = useSpring(rawY, { stiffness: 50, damping: 18, mass: 1.8 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Map mouse Y from top-to-bottom of screen into a -50px to +50px range
+      const normalized = (e.clientY / window.innerHeight - 0.5) * 100;
+      rawY.set(normalized);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [rawY]);
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-start pt-32 pb-24 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f0f0f]/50 to-[#0f0f0f] z-0" />
       
-      {/* Left Mic Image */}
-      <motion.img 
-        src="/mic.png" 
-        alt="Podcast Mic" 
-        className="absolute -left-10 md:-left-24 lg:-left-32 top-10 md:top-24 w-72 md:w-[400px] lg:w-[600px] z-30 object-contain pointer-events-none drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] origin-bottom-left"
-        animate={{ rotate: [-8, 12, -8] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {/* Left Mic: outer = idle idle breathe, inner = lazy spring mouse follow */}
+      <motion.div
+        className="absolute -left-10 md:-left-20 lg:-left-28 top-24 md:top-36 lg:top-40 w-72 md:w-[420px] lg:w-[580px] z-30 pointer-events-none"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <motion.img 
+          src="/mic.png" 
+          alt="Podcast Mic" 
+          className="w-full object-contain"
+          style={{ 
+            y: springY,
+            transformOrigin: '5% 90%'
+          }}
+        />
+      </motion.div>
       
       {/* Right Raj Image */}
       <motion.img 
