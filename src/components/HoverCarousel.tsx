@@ -243,10 +243,19 @@ export default function HoverCarousel() {
             className="absolute inset-0 w-full h-full"
           >
             <img 
-              src={`/${currentImageId}.png`} 
+              src={`/${currentImageId}.webp`} 
               alt={currentImageId} 
               className="absolute inset-0 w-full h-full object-contain pointer-events-none" 
+              loading={currentIndex === 0 ? "eager" : "lazy"}
+              fetchPriority={currentIndex === 0 ? "high" : "auto"}
             />
+
+            {/* Preload Next and Previous Images */}
+            <div className="hidden">
+              <link rel="preload" as="image" href={`/${images[(currentIndex + 1) % images.length]}.webp`} />
+              <link rel="preload" as="image" href={`/${images[(currentIndex + 1) % images.length]}hi.webp`} />
+              <link rel="preload" as="image" href={`/${images[(currentIndex - 1 + images.length) % images.length]}.webp`} />
+            </div>
 
             {/* Hover Polygons */}
             {polygons.map((poly, idx) => {
@@ -288,10 +297,11 @@ export default function HoverCarousel() {
                   {/* Hi Image Layer */}
                   {hiPoly && (
                     <img 
-                      src={`/${currentImageId}hi.png`} 
+                      src={`/${currentImageId}hi.webp`} 
                       alt={`${info.name} Hi`}
                       className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-0 group-hover/person:opacity-100 transition-opacity duration-300 z-10"
                       style={{ clipPath: hiPoly.cssClipPath }}
+                      loading="lazy"
                     />
                   )}
                   

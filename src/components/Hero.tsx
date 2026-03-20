@@ -28,24 +28,28 @@ export default function Hero() {
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
       >
         <motion.img 
-          src="/mic.png" 
+          src="/mic.webp" 
           alt="Podcast Mic" 
           className="w-full object-contain"
           style={{ 
             y: springY,
             transformOrigin: '5% 90%'
           }}
+          loading="eager"
+          fetchPriority="high"
         />
       </motion.div>
       
       {/* Right Raj Image */}
       <motion.img 
-        src="/raj-shamni.png" 
+        src="/raj-shamni.webp" 
         alt="Raj Shamani" 
         className="absolute -right-32 md:-right-48 lg:-right-[220px] xl:-right-[320px] top-4 md:-top-4 xl:-top-24 w-[350px] md:w-[600px] lg:w-[800px] xl:w-[1000px] opacity-60 xl:opacity-80 z-0 object-contain pointer-events-none"
         style={{ maskImage: 'linear-gradient(to left, black 50%, transparent)', WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent)' }}
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        loading="eager"
+        fetchPriority="high"
       />
 
       {/* Hero Text */}

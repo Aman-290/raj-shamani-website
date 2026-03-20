@@ -20,10 +20,8 @@ export default function App() {
   useEffect(() => {
     // Critical hero images to preload
     const imagesToLoad = [
-      '/mic.png',
-      '/raj-shamni.png',
-      '/non-raised.png',
-      '/raised-hand.png'
+      '/mic.webp',
+      '/raj-shamni.webp'
     ];
     let loadedCount = 0;
 
