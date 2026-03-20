@@ -8,7 +8,7 @@ export default function Stats() {
 
   const stats = [
     { platform: "YouTube", followers: "15.8 Million", views: "1.84 Billion", highlights: "Over 8 billion yearly views across primary and ecosystem channels.", icon: <Youtube className="w-6 h-6 text-red-500" /> },
-    { platform: "Instagram", followers: "2.8 Million", views: "Millions per Reel", highlights: "Ecosystem of hundreds of pages pushing 200+ daily posts.", icon: <Instagram className="w-6 h-6 text-pink-500" /> },
+    { platform: "Instagram", followers: "7.4 Million", views: "Millions per Reel", highlights: "Ecosystem of hundreds of pages pushing 200+ daily posts.", icon: <Instagram className="w-6 h-6 text-pink-500" /> },
     { platform: "LinkedIn", followers: "437K+", views: "High Engagement", highlights: "Ranked among India's top 10 authoritative business figures.", icon: <Linkedin className="w-6 h-6 text-blue-500" /> },
     { platform: "X (Twitter)", followers: "344K", views: "N/A", highlights: "Focuses on short-form motivational thoughts and reflections.", icon: <Twitter className="w-6 h-6 text-blue-400" /> },
     { platform: "Spotify", followers: "N/A", views: "11.6M+ plays", highlights: "Ranked among the Top 25 podcasters globally.", icon: <Music className="w-6 h-6 text-green-500" /> },
@@ -77,7 +77,7 @@ export default function Stats() {
             Global Impact & <span className="text-white">Stats</span>
           </h2>
           <p className="text-xl text-gray-400">
-            As of March 2026, Raj Shamani has established a massive digital footprint with over 18 billion total views and a combined following exceeding 22.4 million across all major social platforms.
+            As of March 2026, Raj Shamani has established a massive digital footprint with over 18 billion total views and a combined following exceeding 24 million across all major social platforms.
           </p>
         </motion.div>
 
