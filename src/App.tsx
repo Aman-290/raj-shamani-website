@@ -9,6 +9,12 @@ import OperatingSystem from './components/OperatingSystem';
 import CommunityWall from './components/CommunityWall';
 import Footer from './components/Footer';
 import Scene from './components/Scene';
+import Team from './components/Team';
+import Stats from './components/Stats';
+import Ambassador from './components/Ambassador';
+import Family from './components/Family';
+import Timeline from './components/Timeline';
+import AgentPitch from './components/AgentPitch';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -86,11 +92,17 @@ export default function App() {
       {/* Content */}
       <div className="relative z-10">
         <Hero />
+        <Stats />
+        <Timeline />
         <OriginStory />
+        <Family />
+        <Team />
         <VoiceOfGeneration />
+        <Ambassador />
         <MediaEmpire />
         <Builder />
         <OperatingSystem />
+        <AgentPitch />
         <CommunityWall />
         <Footer />
       </div>
