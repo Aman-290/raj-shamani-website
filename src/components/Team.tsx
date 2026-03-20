@@ -26,13 +26,7 @@ export default function Team() {
       imageUrl: "/Aqueel.jpg",
       linkedinUrl: "https://linkedin.com",
     },
-    {
-      name: "Anik Jain",
-      title: "Brand Architect, DZ!NR",
-      description: "The visual psychology and branding behind his content and House of X are heavily shaped by Anik Jain. He acts as a graphic designer and brand architect, ensuring every visual piece is deeply connected with the audience's psychology.",
-      imageUrl: "/ajin.png",
-      linkedinUrl: "https://linkedin.com",
-    },
+
     {
       name: "Content & Production Team",
       title: "The Backbone",

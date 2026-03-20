@@ -86,11 +86,11 @@ export default function Stats() {
           
           <div className="lg:col-span-4 flex flex-col gap-6">
             <motion.div className="p-8 rounded-3xl bg-[#111] border border-white/10 shadow-lg shadow-black/50" initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}>
-              <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">National Rank</h3>
+              <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">National Rank #1</h3>
               <p className="text-gray-400">Following his show's mega-success, "Figuring Out" is India's #1 business and personal growth podcast on Spotify and YouTube.</p>
             </motion.div>
             <motion.div className="p-8 rounded-3xl bg-[#111] border border-white/10 shadow-lg shadow-black/50" initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }}>
-              <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">Global Rank</h3>
+              <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">Global Rank Top 25</h3>
               <p className="text-gray-400">He has been officially recognized in the Global Top 25 Podcasters list.</p>
             </motion.div>
           </div>

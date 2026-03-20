@@ -77,7 +77,7 @@ export default function Timeline() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: i * 0.1 }}
-                className="min-w-[300px] max-w-[300px] md:min-w-[400px] md:max-w-[400px] snap-center relative flex flex-col pt-1"
+                className="min-w-[300px] max-w-[300px] md:min-w-[350px] md:max-w-[350px] snap-center relative flex flex-col pt-1"
               >
                 {/* Node on the timeline */}
                 <div className="w-6 h-6 rounded-full bg-[#050505] border-[3px] border-[#d8b068] flex-shrink-0 mx-auto mb-8 shadow-[0_0_15px_rgba(216,176,104,0.6)] relative z-10" />
