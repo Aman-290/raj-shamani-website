@@ -8,7 +8,7 @@ export default function Team() {
       name: "Neeraj Kumawat",
       title: "CTO & Co-Founder, House of X",
       description: "He co-founded House of X with Raj to help creators launch their own direct-to-consumer (D2C) brands. A technical visionary who scales community ideas into massive e-commerce infrastructures.",
-      imageUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80",
+      imageUrl: "/neeraj.jpg",
       linkedinUrl: "https://linkedin.com",
       twitterUrl: "https://twitter.com",
     },
@@ -16,7 +16,7 @@ export default function Team() {
       name: "Anik Jain",
       title: "Brand Architect, DZ!NR",
       description: "The visual psychology and branding behind his content and House of X are heavily shaped by Anik Jain. He acts as a graphic designer and brand architect, ensuring every visual piece is deeply connected with the audience's psychology.",
-      imageUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+      imageUrl: "/ajin.png",
       linkedinUrl: "https://linkedin.com",
     },
     {

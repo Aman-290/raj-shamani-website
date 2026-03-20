@@ -1,92 +1,253 @@
-import React from 'react';
-import { FullScreenScrollFX, FullScreenFXAPI } from './ui/full-screen-scroll-fx';
+import { motion, MotionValue, useScroll, useTransform } from 'motion/react';
+import { useRef } from 'react';
 
-const sections = [
+const steps = [
   {
-    leftLabel: "16 Years Old",
-    title: "16yo",
-    rightLabel: "Starting point",
-    background: "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80",
-    renderBackground: (active: boolean) => (
-      <div className="absolute inset-0 bg-[#0a0a0a]">
-        <img 
-          src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80" 
-          alt="Indore" 
-          className="absolute inset-0 w-full h-full object-cover filter grayscale blur-sm opacity-20"
-        />
-        <div className={`absolute inset-0 flex flex-col justify-center items-center p-12 lg:p-32 bg-black/50 transition-opacity duration-1000 ${active ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="max-w-2xl text-center">
-            <h3 className="text-[#d8b068] text-2xl font-bold tracking-[0.2em] uppercase mb-4">The Crucible of Crisis</h3>
-            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic">"Born in Indore, a self-described average student. In 2013, at 16, his father suffered a severe diabetic attack, causing their chemical trading business to collapse. It was time to step up."</p>
-          </div>
-        </div>
-      </div>
-    )
+    tag: "Age 16",
+    title: "The Crucible of Crisis",
+    heading: "From average student to survival mode.",
+    desc: "Born in Indore. He describes himself as an average kid. In 2013, at just 16 years old, his father suffered a severe diabetic attack. Their chemical trading business collapsed overnight. There was no safety net — just a family that needed him to step up.",
+    img: "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=1920&q=80",
+    stat: "₹0",
+    statLabel: "Starting capital",
   },
   {
-    leftLabel: "₹10,000",
-    title: "Bucket",
-    rightLabel: "Borrowed",
-    background: "https://images.unsplash.com/photo-1615849826317-09f199343729?auto=format&fit=crop&q=80",
-    renderBackground: (active: boolean) => (
-      <div className="absolute inset-0 bg-[#0a0a0a]">
-        <img 
-          src="https://images.unsplash.com/photo-1628191140046-24ea942b0eff?auto=format&fit=crop&q=80" 
-          alt="Chemistry mix" 
-          className="absolute inset-0 w-full h-full object-cover filter grayscale blur-sm opacity-20"
-        />
-        <div className={`absolute inset-0 flex flex-col justify-center items-center p-12 lg:p-32 bg-black/50 transition-opacity duration-1000 ${active ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="max-w-2xl text-center">
-            <h3 className="text-[#d8b068] text-2xl font-bold tracking-[0.2em] uppercase mb-4">The Bucket Hustler</h3>
-            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic">"Facing mounting medical bills, Raj borrowed ₹10,000. Without formal training, he learned soap chemistry from YouTube and began mixing chemicals in two plastic buckets."</p>
-          </div>
-        </div>
-      </div>
-    )
+    tag: "₹10,000 Borrowed",
+    title: "The Bucket Entrepreneur",
+    heading: "Mixing chemistry in two plastic buckets.",
+    desc: "Facing crushing medical bills, Raj borrowed ₹10,000. Without any formal training, he learned soap chemistry from YouTube videos and began mixing chemicals on his terrace. His product: 'Jadugar Drop' — a dishwashing liquid priced at ₹45 vs the market's ₹110.",
+    img: "https://images.unsplash.com/photo-1587614207923-a8ee0bdfc258?auto=format&fit=crop&w=1920&q=80",
+    stat: "₹10K",
+    statLabel: "Borrowed to start",
   },
   {
-    leftLabel: "₹200 Cr",
-    title: "Empire",
-    rightLabel: "Turnover",
-    background: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80",
-    renderBackground: (active: boolean) => (
-      <div className="absolute inset-0 bg-[#0a0a0a]">
-        <img 
-          src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80" 
-          alt="Business building" 
-          className="absolute inset-0 w-full h-full object-cover filter grayscale blur-sm opacity-20"
-        />
-        <div className={`absolute inset-0 flex flex-col justify-center items-center p-12 lg:p-32 bg-black/50 transition-opacity duration-1000 ${active ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="max-w-2xl text-center">
-            <h3 className="text-[#d8b068] text-2xl font-bold tracking-[0.2em] uppercase mb-4">Mastering the Scale</h3>
-            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic">"Created 'Jadugar Drop' dishwashing liquid. Empowered local housewives as 'Auntypreneurs' with 25% commission, scaling Shamani Industries to ₹200 crore turnover."</p>
-          </div>
-        </div>
-      </div>
-    )
+    tag: "₹200 Crore Empire",
+    title: "Mastering the Scale",
+    heading: "The 'Auntypreneur' distribution revolution.",
+    desc: "By empowering local housewives as 'Auntypreneurs' on a 25% commission model, he bypassed traditional retail entirely. His common-sense approach to pricing and distribution scaled Shamani Industries to a ₹200 crore turnover — all self-funded, all from hustle.",
+    img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80",
+    stat: "₹200 Cr",
+    statLabel: "Annual turnover",
   }
 ];
 
-export default function OriginStory() {
-  const apiRef = React.useRef<FullScreenFXAPI>(null);
+// Each step gets its own component so hooks aren't called inside loops
+function StepBackground({ scrollYProgress, index, total, img, title }: {
+  scrollYProgress: MotionValue<number>;
+  index: number;
+  total: number;
+  img: string;
+  title: string;
+}) {
+  const segSize = 1 / total;
+  const start = index * segSize;
+  const end = start + segSize;
+
+  const opacity = useTransform(
+    scrollYProgress,
+    [Math.max(0, start - 0.05), Math.min(1, start), Math.min(1, end - 0.05), Math.min(1, end)],
+    [0, 1, 1, index === total - 1 ? 1 : 0]
+  );
+  const scale = useTransform(scrollYProgress, [start, end], [1.05, 1.12]);
 
   return (
-    <section className="bg-black relative">
-      <FullScreenScrollFX
-        sections={sections}
-        apiRef={apiRef}
-        header={
-          <div className="flex flex-col items-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-2 tracking-[0.2em] uppercase text-[#d8b068]">Origin Story</h2>
-            <div className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-              Zero to ₹200 Crores
-            </div>
-          </div>
-        }
-        footer={<div className="text-gray-500 text-sm tracking-[0.3em]">HUSTLE. SCALE. REPEAT.</div>}
-        showProgress
-        durations={{ change: 0.8, snap: 800 }}
+    <motion.div className="absolute inset-0" style={{ opacity }}>
+      <motion.img
+        src={img}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover grayscale"
+        style={{ scale }}
       />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent" />
+    </motion.div>
+  );
+}
+
+function StepCard({ scrollYProgress, index, total, step }: {
+  scrollYProgress: MotionValue<number>;
+  index: number;
+  total: number;
+  step: typeof steps[0];
+}) {
+  const segSize = 1 / total;
+  const start = index * segSize;
+  const end = start + segSize;
+
+  const opacity = useTransform(
+    scrollYProgress,
+    [Math.max(0, start - 0.04), Math.min(1, start + 0.04), Math.min(1, end - 0.04), Math.min(1, end)],
+    [0, 1, 1, index === total - 1 ? 1 : 0]
+  );
+  const y = useTransform(
+    scrollYProgress,
+    [Math.max(0, start - 0.04), Math.min(1, start + 0.04), Math.min(1, end - 0.04), Math.min(1, end)],
+    [40, 0, 0, index === total - 1 ? 0 : -40]
+  );
+
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center"
+      style={{ opacity, y }}
+    >
+      <div className="max-w-2xl">
+        {/* Tag */}
+        <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-[#d8b068]/40 bg-[#d8b068]/10 backdrop-blur-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#d8b068] animate-pulse" />
+          <span className="text-[#d8b068] text-xs font-bold tracking-[0.2em] uppercase">{step.tag}</span>
+        </div>
+
+        {/* Heading */}
+        <h3 className="text-4xl md:text-6xl font-black text-white leading-[1.05] mb-6 tracking-tight">
+          {step.heading}
+        </h3>
+
+        {/* Quote body */}
+        <p className="text-gray-300 text-lg md:text-xl leading-relaxed border-l-2 border-[#d8b068]/60 pl-6">
+          {step.desc}
+        </p>
+
+        {/* Stat */}
+        <div className="mt-10 flex items-end gap-3">
+          <span className="text-5xl md:text-7xl font-black text-[#d8b068] leading-none tracking-tighter">
+            {step.stat}
+          </span>
+          <span className="text-gray-400 text-base mb-2 uppercase tracking-widest font-semibold">
+            {step.statLabel}
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function StepNav({ scrollYProgress, index, total, step }: {
+  scrollYProgress: MotionValue<number>;
+  index: number;
+  total: number;
+  step: typeof steps[0];
+}) {
+  const segSize = 1 / total;
+  const start = index * segSize;
+  const end = start + segSize;
+
+  const opacity = useTransform(
+    scrollYProgress, 
+    [Math.max(0, start - 0.02), Math.min(1, start + 0.08), Math.min(1, end - 0.08), Math.min(1, end)], 
+    [0.25, 1, 1, index === total - 1 ? 1 : 0.25]
+  );
+  const scaleX = useTransform(scrollYProgress, [start, end], [0, 1]);
+
+  return (
+    <motion.div className="flex flex-col gap-2" style={{ opacity }}>
+      <span className="text-xs text-gray-500 uppercase tracking-[0.2em] font-semibold">{`0${index + 1}`}</span>
+      <span className="text-white font-bold text-base leading-snug">{step.title}</span>
+      {/* Progress bar under this step */}
+      <div className="h-[2px] w-32 bg-white/10 rounded-full mt-1">
+        <motion.div className="h-full bg-[#d8b068] rounded-full" style={{ scaleX, transformOrigin: 'left' }} />
+      </div>
+    </motion.div>
+  );
+}
+
+export default function OriginStory() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative bg-black"
+      style={{ height: `${steps.length * 100}vh` }}
+    >
+      {/* Sticky viewport */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+
+        {/* Layered backgrounds — one per step */}
+        <div className="absolute inset-0">
+          {steps.map((step, i) => (
+            <StepBackground
+              key={i}
+              scrollYProgress={scrollYProgress}
+              index={i}
+              total={steps.length}
+              img={step.img}
+              title={step.title}
+            />
+          ))}
+        </div>
+
+        {/* Main content area */}
+        <div className="relative z-10 h-full flex">
+
+          {/* Left — navigation sidebar */}
+          <div className="hidden md:flex flex-col justify-center gap-10 w-64 px-10 border-r border-white/5">
+            <p className="text-[#d8b068] text-[10px] font-black tracking-[0.4em] uppercase mb-4 opacity-60">
+              Origin Story
+            </p>
+            {steps.map((step, i) => (
+              <StepNav
+                key={i}
+                scrollYProgress={scrollYProgress}
+                index={i}
+                total={steps.length}
+                step={step}
+              />
+            ))}
+          </div>
+
+          {/* Right — story cards */}
+          <div className="flex-1 relative flex items-center px-8 md:px-16 lg:px-20">
+            {steps.map((step, i) => (
+              <StepCard
+                key={i}
+                scrollYProgress={scrollYProgress}
+                index={i}
+                total={steps.length}
+                step={step}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Vertical scroll progress line */}
+        <ProgressLine scrollYProgress={scrollYProgress} />
+
+        {/* Scroll hint — only at very start */}
+        <ScrollHint scrollYProgress={scrollYProgress} />
+      </div>
     </section>
+  );
+}
+
+function ProgressLine({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  return (
+    <div className="absolute right-6 top-1/2 -translate-y-1/2 h-40 w-[1px] bg-white/10">
+      <motion.div
+        className="w-full bg-[#d8b068] origin-top"
+        style={{ scaleY, height: '100%' }}
+      />
+    </div>
+  );
+}
+
+function ScrollHint({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+  const opacity = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
+  return (
+    <motion.div
+      className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      style={{ opacity }}
+    >
+      <span className="text-gray-500 text-xs tracking-[0.3em] uppercase font-semibold">Scroll</span>
+      <motion.div
+        className="w-[1px] h-8 bg-gradient-to-b from-[#d8b068] to-transparent"
+        animate={{ scaleY: [0, 1, 0], opacity: [0, 1, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+      />
+    </motion.div>
   );
 }

@@ -29,6 +29,8 @@ interface ActivityChartCardProps {
   data: ActivityDataPoint[];
   className?: string;
   dropdownOptions?: string[];
+  selectedRange?: string;
+  onRangeChange?: (range: string) => void;
 }
 
 export const ActivityChartCard = ({
@@ -37,10 +39,22 @@ export const ActivityChartCard = ({
   data,
   className,
   dropdownOptions = ["Weekly", "Monthly", "Yearly"],
+  selectedRange: externalSelectedRange,
+  onRangeChange,
 }: ActivityChartCardProps) => {
-  const [selectedRange, setSelectedRange] = React.useState(
+  const [internalRange, setInternalRange] = React.useState(
     dropdownOptions[0] || ""
   );
+
+  const selectedRange = externalSelectedRange !== undefined ? externalSelectedRange : internalRange;
+
+  const handleRangeChange = (option: string) => {
+    if (onRangeChange) {
+      onRangeChange(option);
+    } else {
+      setInternalRange(option);
+    }
+  };
 
   const maxValue = React.useMemo(() => {
     return data.reduce((max, item) => (item.value > max ? item.value : max), 0);
@@ -93,7 +107,7 @@ export const ActivityChartCard = ({
               {dropdownOptions.map((option) => (
                 <DropdownMenuItem
                   key={option}
-                  onSelect={() => setSelectedRange(option)}
+                  onSelect={() => handleRangeChange(option)}
                   className="hover:bg-white/10 focus:bg-white/10 cursor-pointer"
                 >
                   {option}

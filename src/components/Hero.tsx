@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import { useEffect } from 'react';
-import InteractiveGroup from './InteractiveGroup';
+import HoverCarousel from './HoverCarousel';
 
 export default function Hero() {
   // Spring-backed mouse Y tracker for the mic
@@ -76,7 +76,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* The 17-Person Interactive Group */}
+      {/* The Hover Carousel Group */}
       <div className="relative z-20 w-full max-w-7xl mx-auto my-4 mix-blend-screen">
         <motion.div
            initial={{ opacity: 0, scale: 0.95 }}
@@ -87,7 +87,7 @@ export default function Hero() {
              animate={{ y: [0, -6, 0] }}
              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           >
-            <InteractiveGroup />
+            <HoverCarousel />
           </motion.div>
         </motion.div>
       </div>

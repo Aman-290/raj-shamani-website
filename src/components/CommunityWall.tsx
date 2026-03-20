@@ -32,8 +32,18 @@ export default function CommunityWall() {
   ];
 
   return (
-    <section className="py-24 px-6 relative bg-[#050505]">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-24 px-6 relative bg-[#050505] overflow-hidden">
+      {/* Background with texture/grain */}
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+        <img 
+          src="https://images.unsplash.com/photo-1542451313056-b7c8e626645f?auto=format&fit=crop&q=80" 
+          alt="texture" 
+          className="w-full h-full object-cover grayscale mix-blend-overlay"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]"></div>
+      </div>
+      
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
