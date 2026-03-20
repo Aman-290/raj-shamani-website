@@ -22,3 +22,37 @@ body {
 .display-font {
   font-family: var(--font-display);
 }
+
+/* Custom Professional Dark Theme Scrollbar */
+@layer base {
+  :root {
+    scrollbar-color: #2e2e2e #050505;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #050505;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2e2e2e;
+    border-radius: 20px;
+    border: 3px solid #050505;
+    transition: background 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d8b068;
+  }
+
+  /* Thin scrollbar for nested scroll containers */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+

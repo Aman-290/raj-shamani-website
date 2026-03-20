@@ -13,11 +13,27 @@ import Ambassador from './components/Ambassador';
 import Family from './components/Family';
 import Timeline from './components/Timeline';
 import AgentPitch from './components/AgentPitch';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Smooth Scrolling Implementation (Lenis)
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
     // Critical hero images to preload
     const imagesToLoad = [
       '/mic.webp',
@@ -31,7 +47,7 @@ export default function App() {
       img.onload = () => {
         loadedCount++;
         if (loadedCount === imagesToLoad.length) {
-          setTimeout(() => setLoading(false), 800); // 800ms minimum display for premium feel
+          setTimeout(() => setLoading(false), 800);
         }
       };
       img.onerror = () => {
@@ -39,6 +55,10 @@ export default function App() {
         if (loadedCount === imagesToLoad.length) setLoading(false);
       };
     });
+
+    return () => {
+      lenis.destroy();
+    };
   }, []);
 
   const containerRef = useRef<HTMLDivElement>(null);
