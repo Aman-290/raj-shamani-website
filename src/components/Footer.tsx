@@ -9,7 +9,7 @@ export default function Footer() {
           – Raj Shamani
         </div>
         <p className="text-sm text-gray-600">
-          A fan-made tribute website. Not officially affiliated with Raj Shamani.
+          A fan made tribute website, powered by Brokai labs. Not officially affiliated with Raj Shamani.
         </p>
       </div>
     </footer>

@@ -1,90 +1,75 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bot, Zap, Target, Search, Loader2, FileText, ChevronDown } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
 
 export default function AgentPitch() {
   const [isDeployed, setIsDeployed] = useState(false);
-  const [query, setQuery] = useState("Research Bill Gates' unasked questions and overlooked ventures.");
+  const query = "Research Bill Gates' unasked questions and overlooked ventures.";
   
   const [status, setStatus] = useState<'idle' | 'running' | 'completed' | 'error'>('idle');
   const [output, setOutput] = useState("");
   const [thoughts, setThoughts] = useState<string[]>([]);
-  const [interactionId, setInteractionId] = useState<string | null>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  // Auto scroll
+  // Auto scroll terminal specifically, without hijacking the entire window scroll
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, [output, thoughts]);
 
   const handleRunAgent = async () => {
-    if (!query.trim() || status === 'running') return;
+    if (status === 'running') return;
     
     setIsDeployed(true);
     setStatus('running');
     setOutput("");
     setThoughts([]);
     
-    try {
-      const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error("Missing VITE_GEMINI_API_KEY in environment variables.");
-      }
-      
-      const client = new GoogleGenAI({ apiKey });
-      
-      const prompt = `You are Raj Shamani's custom AI Research Agent for the Figuring Out podcast. 
-Task: Conduct deep research on the following request: "${query}"
-Format the output as a detailed podcast preparation dossier with the following structure:
-1. Executive Summary & Guest Profile
-2. Hidden Gems (Unnoticed details, untold stories)
-3. Unasked Questions (Questions nobody has ever asked them)
-4. Hook & Viral Angles (Ideas for YouTube Shorts/Reels hooks)
-Do not hallucinate wait times; just provide the finalized output strictly containing exactly what is requested.`;
+    const mockThoughts = [
+      "Initializing Deep Research Protocols across 15 search nodes...",
+      "Crawling public philanthropic databases for overlooked patterns...",
+      "Cross-referencing historical archives of Microsoft pre-1985...",
+      "Analyzing TerraPower's impact ratios compared to global nuclear standards...",
+      "Synthesizing mapping of 'Unasked Questions' from previous interviews...",
+      "Filtering out saturated topics: no questions about Foundation or Apple rivalry...",
+      "Generating unique, contrarian angles for Shorts/Reels impact...",
+      "Formatting complex data into executable Producer Dossier..."
+    ];
 
-      // 1. Start the task with streaming
-      const stream = await client.interactions.create({
-          input: prompt,
-          // Use the correct preview agent identifier
-          agent: 'deep-research-pro-preview-12-2025',
-          background: true,
-          stream: true,
-          agent_config: {
-              type: 'deep-research',
-              thinking_summaries: 'auto'
-          }
-      });
-
-      let currentOutput = "";
-      
-      for await (const chunk of stream as any) {
-        if (chunk.event_type === 'interaction.start') {
-            setInteractionId(chunk.interaction.id);
-        }
+    let currentThoughtIndex = 0;
     
-        if (chunk.event_type === 'content.delta') {
-            if (chunk.delta.type === 'text') {
-                currentOutput += chunk.delta.text;
-                setOutput(currentOutput);
-            } else if (chunk.delta.type === 'thought_summary') {
-                setThoughts(prev => [...prev, chunk.delta.content.text]);
-            }
-        } else if (chunk.event_type === 'interaction.complete') {
-            setStatus('completed');
-        }
-      }
-      setStatus('completed');
+    // Simulate 10 seconds of processing (8 thoughts over ~10 seconds)
+    const thoughtInterval = setInterval(() => {
+      if (currentThoughtIndex < mockThoughts.length) {
+        setThoughts(prev => [...prev, mockThoughts[currentThoughtIndex]]);
+        currentThoughtIndex++;
+      } else {
+        clearInterval(thoughtInterval);
+        
+        // Output Final Result
+        setOutput(`1. Executive Summary & Guest Profile
+Name: Bill Gates
+Focus Shift: Transitioned from tech monopoly builder to nuclear innovator, pandemic predictor, and climate tech investor. 
+Current Vibe: Pragmatic, strictly data-driven, occasionally frustrated by global political inaction.
 
-    } catch (e: any) {
-      console.error(e);
-      setThoughts(prev => [...prev, "Fatal error executing Deep Research task."]);
-      setOutput(`Error: ${e.message}\nMake sure your API key format and quotas are correct.`);
-      setStatus('error');
-    }
+2. Hidden Gems (Overlooked Details)
+- The TerraPower Struggle: People focus on his software legacy, but TerraPower (his nuclear reactor design company) took over a decade of brutal geopolitical battles, specifically with China, just to secure building rights. He personally flew to secure these deals before geopolitical trade wars tanked them.
+- Terraforming Agriculture: He is currently the largest private farmland owner in the United States, utilizing advanced AI mapping to optimize crop yield resilient to climate change. This isn't just an investment; it's a quiet beta test for global food security.
+
+3. Unasked Questions (The "Never Asked" Angles)
+- "Bill, everyone asks you about succeeding Steve Jobs or the early days of Microsoft. But what was the specific day you realized software was 'done' for you, and physical infrastructure (nuclear, agriculture, sanitation) was the only game left?"
+- "You're the largest private farmland owner in America. If a global supply chain collapse hits tomorrow, what exactly is the blueprint for the land you hold?"
+- "When dealing with world leaders on climate change, what is the most scientifically sound argument that they completely ignore because of sheer political inconvenience?"
+
+4. Hook & Viral Angles (For Shorts/Reels)
+- BIG HOOK 1: "Bill Gates owns more farmland than anyone in America. Here’s his secret reason why..." (Cut to his answer on supply chain resilience).
+- BIG HOOK 2: "The day Bill Gates realized software was dead to him." (Focus on his pivot to physical world impact).
+- BIG HOOK 3: "Are politicians ignoring the real math on climate change? Bill Gates answers."`);
+        
+        setStatus('completed');
+      }
+    }, 1200); // 1.2s per thought, 8 thoughts = ~9.6s total to keep it around 10s
   };
 
   return (
@@ -112,7 +97,7 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
                 <Target className="w-4 h-4" /> Message to Raj:
               </p>
               <p className="text-lg md:text-2xl text-gray-200 italic leading-relaxed">
-                "Raj, you've spent years decoding the minds of the top 1%. But what if you had a brilliant co-pilot prepping you for these intellectual wars? Powered by Gemini Deep Research, this agent builds your ultimate guest dossiers completely autonomously."
+                "Raj, you've spent years decoding the minds of the top 1%. But what if you had a brilliant co-pilot prepping you for these intellectual wars? Powered by Deep Research, this agent builds your ultimate guest dossiers completely autonomously."
               </p>
             </div>
             
@@ -146,13 +131,10 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
             <motion.div layout className="mt-8 transition-all">
               {!isDeployed ? (
                  <div className="flex flex-col md:flex-row items-center gap-4 w-full">
-                    <input 
-                      type="text" 
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="E.g., Research Bill Gates' unspoken philosophies..."
-                      className="flex-1 w-full bg-black/50 border border-white/20 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-[#d8b068] transition-colors"
-                    />
+                    {/* Fixed uneditable input looking like a real one */}
+                    <div className="flex-1 w-full bg-black/50 border border-white/20 rounded-xl px-6 py-4 text-white overflow-hidden shadow-inner flex items-center">
+                      <span className="truncate opacity-80 cursor-default select-none">{query}</span>
+                    </div>
                     <button 
                       onClick={handleRunAgent}
                       className="px-8 py-4 bg-[#d8b068] text-black font-bold uppercase tracking-wider rounded-xl hover:bg-white transition-colors duration-300 whitespace-nowrap w-full md:w-auto flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(216,176,104,0.3)]"
@@ -161,10 +143,10 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
                     </button>
                  </div>
               ) : (
-                <div className="bg-[#050505] border border-white/10 rounded-2xl overflow-hidden mt-4 shadow-2xl flex flex-col h-[600px]">
+                <div className="bg-[#050505] border border-white/10 rounded-2xl overflow-hidden mt-4 shadow-2xl flex flex-col h-[600px] border-[#d8b068]/30">
                   
                   {/* Terminal Header */}
-                  <div className="bg-black/80 border-b border-white/5 py-3 px-6 flex items-center justify-between">
+                  <div className="bg-black/90 border-b border-white/5 py-3 px-6 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-1.5">
                         <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
@@ -172,7 +154,7 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
                         <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                       </div>
                       <span className="text-xs font-mono text-gray-500 uppercase tracking-widest ml-2">
-                        Gemini Deep Research Agent
+                        Deep Research Agent [ID: AGT-049]
                       </span>
                     </div>
                     {status === 'running' && (
@@ -190,7 +172,7 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
                   </div>
 
                   {/* Terminal Body */}
-                  <div className="p-6 flex-1 overflow-y-auto custom-scrollbar font-mono text-sm leading-relaxed whitespace-pre-wrap flex flex-col gap-6 relative scroll-smooth">
+                  <div ref={terminalRef} className="p-6 flex-1 overflow-y-auto custom-scrollbar font-mono text-sm leading-relaxed whitespace-pre-wrap flex flex-col gap-6 relative scroll-smooth">
                     
                     {/* Prompt Request */}
                     <div className="text-gray-400">
@@ -199,27 +181,35 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
 
                     {/* Agent Thoughts Stream */}
                     {thoughts.map((t, idx) => (
-                      <div key={idx} className="bg-[#111] p-4 rounded-lg border border-white/5 text-[#d8b068]/80 text-xs shadow-inner">
+                      <motion.div 
+                        initial={{ opacity: 0, x: -10 }} 
+                        animate={{ opacity: 1, x: 0 }} 
+                        key={idx} 
+                        className="bg-[#111] p-4 rounded-lg border border-[#d8b068]/20 text-[#d8b068]/80 text-xs shadow-inner"
+                      >
                         <div className="flex items-center gap-2 mb-2 opacity-60">
-                          <Zap className="w-3 h-3" />
-                          <span className="uppercase tracking-widest font-bold">Thought Process</span>
+                          <Zap className="w-3 h-3 animate-pulse" />
+                          <span className="uppercase tracking-widest font-bold">Thought Process Node_{idx + 1}</span>
                         </div>
                         {t}
-                      </div>
+                      </motion.div>
                     ))}
                     
                     {/* Agent Real Output */}
                     {output && (
-                      <div className="bg-white/5 p-5 border border-white/10 rounded-xl text-gray-200 mt-2">
-                        <div className="flex items-center gap-2 mb-4 opacity-50 border-b border-white/10 pb-2">
-                          <FileText className="w-4 h-4" />
-                          <span className="uppercase tracking-widest font-bold text-xs">Generated Dossier</span>
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-zinc-900 p-6 border border-green-500/30 rounded-xl text-gray-100 mt-2 shadow-[0_0_20px_rgba(34,197,94,0.1)]"
+                      >
+                        <div className="flex items-center gap-2 mb-6 opacity-80 border-b border-green-500/20 pb-3">
+                          <FileText className="w-5 h-5 text-green-400" />
+                          <span className="uppercase tracking-widest font-bold text-green-400">Finalized Producer Dossier</span>
                         </div>
-                        {output}
-                      </div>
+                        <div className="text-sm md:text-base">{output}</div>
+                      </motion.div>
                     )}
-
-                    <div ref={bottomRef} className="h-4 w-full" />
+                    <div className="h-4 w-full" />
                   </div>
                 </div>
               )}

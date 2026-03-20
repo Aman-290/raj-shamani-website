@@ -260,12 +260,12 @@ export default function CommunityWall() {
           
           <div className="relative z-10">
             <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">Downloadable Resources</h3>
-            <p className="text-gray-400 max-w-xl">Free, fan-made Notion templates for habit tracking based on Raj's MOVERS framework (Meditate, Oxygenate, Visualise, Exercise, Read, Scribe) and his 4-3-2-1 sleep protocol.</p>
+            <p className="text-gray-400 max-w-xl">A useful guide on how to create an animated explainer video automated flow using AI.</p>
           </div>
-          <button className="relative z-10 flex-shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-bold hover:bg-[#d8b068] transition-colors shadow-lg shadow-white/10">
+          <a href="/guide.pdf" download className="relative z-10 flex-shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-bold hover:bg-[#d8b068] transition-colors shadow-lg shadow-white/10">
             <Download className="w-5 h-5" />
-            Get Templates
-          </button>
+            Download AI Guide
+          </a>
         </motion.div>
       </div>
     </section>

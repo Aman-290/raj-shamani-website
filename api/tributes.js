@@ -1,11 +1,14 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+// Redis.fromEnv() automatically uses UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
+const kv = Redis.fromEnv();
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const newTribute = req.body;
       
-      // Store tribute in Vercel KV list named 'tributes'
+      // Store tribute in Upstash Redis list named 'tributes'
       await kv.lpush('tributes', JSON.stringify(newTribute));
       
       return res.status(200).json({ success: true, tribute: newTribute });
@@ -17,7 +20,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      // Fetch top 50 tributes from KV
+      // Fetch top 50 tributes from Redis
       const tributes = await kv.lrange('tributes', 0, 50);
       return res.status(200).json({ tributes });
     } catch (error) {
