@@ -2,8 +2,6 @@ import { useScroll, motion, AnimatePresence } from 'motion/react';
 import { useRef, useState, useEffect } from 'react';
 import Hero from './components/Hero';
 import OriginStory from './components/OriginStory';
-import VoiceOfGeneration from './components/VoiceOfGeneration';
-import MediaEmpire from './components/MediaEmpire';
 import Builder from './components/Builder';
 import OperatingSystem from './components/OperatingSystem';
 import CommunityWall from './components/CommunityWall';
@@ -97,9 +95,7 @@ export default function App() {
         <OriginStory />
         <Family />
         <Team />
-        <VoiceOfGeneration />
         <Ambassador />
-        <MediaEmpire />
         <Builder />
         <OperatingSystem />
         <AgentPitch />
