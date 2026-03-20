@@ -259,12 +259,12 @@ export default function CommunityWall() {
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#d8b068]/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
           
           <div className="relative z-10">
-            <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">A Gift for the Figuring Out Team</h3>
-            <p className="text-gray-400 max-w-xl">We built Raj a custom AI research agent that autonomously builds guest dossiers before every interview. Powered by Deep Research. Free for the Figuring Out team to use.</p>
+            <h3 className="text-2xl font-bold mb-2 text-[#d8b068]">Downloadable Resources</h3>
+            <p className="text-gray-400 max-w-xl">Raj has always believed in building systems that free up time for what matters. This guide breaks down how to automate your content creation workflow using AI — so you can focus on the conversations that change lives.</p>
           </div>
           <a href="/guidepdf.pdf" download className="relative z-10 flex-shrink-0 flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-bold hover:bg-[#d8b068] transition-colors shadow-lg shadow-white/10">
             <Download className="w-5 h-5" />
-            Access AI Agent
+            Download AI Guide
           </a>
         </motion.div>
       </div>
