@@ -23,7 +23,7 @@ export default function Hero() {
       
       {/* Left Mic: outer = idle idle breathe, inner = lazy spring mouse follow */}
       <motion.div
-        className="absolute -left-20 md:-left-32 lg:-left-40 top-40 md:top-52 lg:top-72 w-80 md:w-[480px] lg:w-[640px] z-30 pointer-events-none"
+        className="absolute -left-20 md:-left-32 lg:-left-40 top-20 md:top-52 lg:top-72 w-80 md:w-[480px] lg:w-[640px] z-0 pointer-events-none"
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
       >
