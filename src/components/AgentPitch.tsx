@@ -30,7 +30,7 @@ export default function AgentPitch() {
     setThoughts([]);
     
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
         throw new Error("Missing VITE_GEMINI_API_KEY in environment variables.");
       }
@@ -61,7 +61,7 @@ Do not hallucinate wait times; just provide the finalized output strictly contai
 
       let currentOutput = "";
       
-      for await (const chunk of stream) {
+      for await (const chunk of stream as any) {
         if (chunk.event_type === 'interaction.start') {
             setInteractionId(chunk.interaction.id);
         }
