@@ -23,7 +23,7 @@ export default function Hero() {
       
       {/* Left Mic: outer = idle idle breathe, inner = lazy spring mouse follow */}
       <motion.div
-        className="absolute -left-20 md:-left-32 lg:-left-40 top-20 md:top-52 lg:top-72 w-80 md:w-[480px] lg:w-[640px] z-0 pointer-events-none"
+        className="absolute -left-20 md:-left-32 lg:-left-40 top-4 md:top-24 lg:top-40 w-80 md:w-[480px] lg:w-[640px] z-0 pointer-events-none"
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -44,7 +44,7 @@ export default function Hero() {
       <motion.img 
         src="/raj-shamni.webp" 
         alt="Raj Shamani" 
-        className="absolute -right-32 md:-right-48 lg:-right-[220px] xl:-right-[320px] top-4 md:-top-4 xl:-top-24 w-[350px] md:w-[600px] lg:w-[800px] xl:w-[1000px] opacity-60 xl:opacity-80 z-0 object-contain pointer-events-none"
+        className="absolute -right-48 md:-right-72 lg:-right-[350px] xl:-right-[450px] top-4 md:-top-4 xl:-top-24 w-[350px] md:w-[600px] lg:w-[800px] xl:w-[1000px] opacity-60 xl:opacity-80 z-0 object-contain pointer-events-none"
         style={{ maskImage: 'linear-gradient(to left, black 50%, transparent)', WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent)' }}
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
