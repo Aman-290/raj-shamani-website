@@ -1,63 +1,92 @@
-import { motion } from 'motion/react';
-import { Droplet, TrendingUp, Users } from 'lucide-react';
+import React from 'react';
+import { FullScreenScrollFX, FullScreenFXAPI } from './ui/full-screen-scroll-fx';
 
-export default function OriginStory() {
-  const steps = [
-    {
-      icon: <TrendingUp className="w-8 h-8 text-[#bb9753]" />,
-      title: "The Crucible of Crisis",
-      desc: "Born in Indore, a self-described average student. In 2013, at 16, his father suffered a severe diabetic attack, causing their chemical trading business to collapse."
-    },
-    {
-      icon: <Droplet className="w-8 h-8 text-[#072754]" />,
-      title: "The Bucket Entrepreneur",
-      desc: "Facing mounting medical bills, Raj borrowed ₹10,000. Without formal training, he learned soap chemistry from YouTube and began mixing chemicals in two plastic buckets."
-    },
-    {
-      icon: <Users className="w-8 h-8 text-[#382213]" />,
-      title: "Mastering the Hustle",
-      desc: "Created 'Jadugar Drop' dishwashing liquid. Priced at ₹45 (vs competitors' ₹110). Empowered local housewives as 'Auntypreneurs' with 25% commission, scaling Shamani Industries to ₹200 crore turnover."
-    }
-  ];
-
-  return (
-    <section className="py-24 px-6 relative">
-      <div className="max-w-6xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="mb-16"
-        >
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">
-            From ₹10,000 to <br/>
-            <span className="text-[#bb9753]">₹200 Crores</span>
-          </h2>
-          <p className="text-xl text-gray-400">You don't need a silver spoon to win.</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: idx * 0.2 }}
-              className="group relative p-8 rounded-3xl bg-gradient-to-b from-white/5 to-transparent border border-white/10 hover:border-[#bb9753]/50 transition-colors"
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-[#bb9753]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
-              <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-6">
-                  {step.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{step.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{step.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+const sections = [
+  {
+    leftLabel: "16 Years Old",
+    title: "16yo",
+    rightLabel: "Starting point",
+    background: "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80",
+    renderBackground: (active: boolean) => (
+      <div className="absolute inset-0 bg-[#0a0a0a]">
+        <img 
+          src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80" 
+          alt="Indore" 
+          className="absolute inset-0 w-full h-full object-cover filter grayscale blur-sm opacity-20"
+        />
+        <div className={`absolute inset-0 flex flex-col justify-center items-center p-12 lg:p-32 bg-black/50 transition-opacity duration-1000 ${active ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="max-w-2xl text-center">
+            <h3 className="text-[#d8b068] text-2xl font-bold tracking-[0.2em] uppercase mb-4">The Crucible of Crisis</h3>
+            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic">"Born in Indore, a self-described average student. In 2013, at 16, his father suffered a severe diabetic attack, causing their chemical trading business to collapse. It was time to step up."</p>
+          </div>
         </div>
       </div>
+    )
+  },
+  {
+    leftLabel: "₹10,000",
+    title: "Bucket",
+    rightLabel: "Borrowed",
+    background: "https://images.unsplash.com/photo-1615849826317-09f199343729?auto=format&fit=crop&q=80",
+    renderBackground: (active: boolean) => (
+      <div className="absolute inset-0 bg-[#0a0a0a]">
+        <img 
+          src="https://images.unsplash.com/photo-1628191140046-24ea942b0eff?auto=format&fit=crop&q=80" 
+          alt="Chemistry mix" 
+          className="absolute inset-0 w-full h-full object-cover filter grayscale blur-sm opacity-20"
+        />
+        <div className={`absolute inset-0 flex flex-col justify-center items-center p-12 lg:p-32 bg-black/50 transition-opacity duration-1000 ${active ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="max-w-2xl text-center">
+            <h3 className="text-[#d8b068] text-2xl font-bold tracking-[0.2em] uppercase mb-4">The Bucket Hustler</h3>
+            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic">"Facing mounting medical bills, Raj borrowed ₹10,000. Without formal training, he learned soap chemistry from YouTube and began mixing chemicals in two plastic buckets."</p>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    leftLabel: "₹200 Cr",
+    title: "Empire",
+    rightLabel: "Turnover",
+    background: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80",
+    renderBackground: (active: boolean) => (
+      <div className="absolute inset-0 bg-[#0a0a0a]">
+        <img 
+          src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80" 
+          alt="Business building" 
+          className="absolute inset-0 w-full h-full object-cover filter grayscale blur-sm opacity-20"
+        />
+        <div className={`absolute inset-0 flex flex-col justify-center items-center p-12 lg:p-32 bg-black/50 transition-opacity duration-1000 ${active ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="max-w-2xl text-center">
+            <h3 className="text-[#d8b068] text-2xl font-bold tracking-[0.2em] uppercase mb-4">Mastering the Scale</h3>
+            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic">"Created 'Jadugar Drop' dishwashing liquid. Empowered local housewives as 'Auntypreneurs' with 25% commission, scaling Shamani Industries to ₹200 crore turnover."</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+];
+
+export default function OriginStory() {
+  const apiRef = React.useRef<FullScreenFXAPI>(null);
+
+  return (
+    <section className="bg-black relative">
+      <FullScreenScrollFX
+        sections={sections}
+        apiRef={apiRef}
+        header={
+          <div className="flex flex-col items-center">
+            <h2 className="text-xl md:text-2xl font-bold mb-2 tracking-[0.2em] uppercase text-[#d8b068]">Origin Story</h2>
+            <div className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+              Zero to ₹200 Crores
+            </div>
+          </div>
+        }
+        footer={<div className="text-gray-500 text-sm tracking-[0.3em]">HUSTLE. SCALE. REPEAT.</div>}
+        showProgress
+        durations={{ change: 0.8, snap: 800 }}
+      />
     </section>
   );
 }
