@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const infoMapping: Record<string, Record<string, { name: string, who_they_are: string, podcast_link: string }>> = {
@@ -196,11 +196,105 @@ export default function HoverCarousel() {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  // Preload carousel images efficiently
+  useEffect(() => {
+    images.forEach(img => {
+      const image = new Image();
+      image.src = `/${img}.png`;
+    });
+  }, []);
+
   const currentImageId = images[currentIndex];
   const currentInfoMap = infoMapping[currentImageId] || {};
 
+  // Compute Host's (Raj Shamani) center coordinates dynamically per image for wire mapping
+  let hostCenterX: number | null = null;
+  let hostCenterY: number | null = null;
+  
+  polygons.forEach((poly) => {
+    const info = currentInfoMap[poly.label];
+    if (info && info.name === "Raj Shamani") {
+      const xs = poly.rawPoints.map(p => p.x);
+      const ys = poly.rawPoints.map(p => p.y);
+      hostCenterX = (Math.min(...xs) + Math.max(...xs)) / 2;
+      hostCenterY = ((Math.min(...ys) + Math.max(...ys)) / 2) - 12; // Adjust to exact chest point
+    }
+  });
+
+  // Custom Cursor
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  const springConfig = { damping: 25, stiffness: 200, mass: 0.5 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
+  const [isHovering, setIsHovering] = useState(false);
+  const [hoverTarget, setHoverTarget] = useState<string | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dynPath = useMotionValue("");
+
+  useEffect(() => {
+    let animationFrameId: number;
+    const updatePath = () => {
+      const el = containerRef.current;
+      
+      // Wire stays attached everywhere in the image container unless specifically hovering over Raj himself
+      if (!el || !isHovering || hostCenterX === null || hostCenterY === null) {
+        dynPath.set("");
+        return;
+      }
+      if (hoverTarget && currentInfoMap[hoverTarget]?.name === "Raj Shamani") {
+        dynPath.set("");
+        return;
+      }
+
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+
+      // Read direct spring tracking physics for pixel perfect sync with UI cursor
+      const x = cursorXSpring.get();
+      const y = cursorYSpring.get();
+
+      const rX = (hostCenterX / 100) * w;
+      const rY = (hostCenterY / 100) * h;
+      
+      const dx = Math.abs(x - rX);
+      const dy = Math.abs(y - rY);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const sag = dist * 0.25;
+
+      const curveControlX = (x + rX) / 2;
+      const curveControlY = Math.max(y, rY) + sag;
+      
+      dynPath.set(`M ${x} ${y} Q ${curveControlX} ${curveControlY}, ${rX} ${rY}`);
+    };
+
+    const unsubX = cursorXSpring.on("change", updatePath);
+    const unsubY = cursorYSpring.on("change", updatePath);
+    
+    updatePath();
+
+    return () => {
+      unsubX();
+      unsubY();
+    };
+  }, [hostCenterX, hostCenterY, currentInfoMap, hoverTarget, isHovering, cursorXSpring, cursorYSpring]);
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    cursorX.set(e.clientX - rect.left);
+    cursorY.set(e.clientY - rect.top);
+  };
+
   return (
-    <div className="relative w-full max-w-[1200px] mx-auto select-none my-8 group/carousel flex items-center justify-between px-2 md:px-8 gap-2 md:gap-8">
+    <>
+      <style>{`
+        @keyframes energyFlow {
+          from { stroke-dashoffset: 14; }
+          to { stroke-dashoffset: 0; }
+        }
+      `}</style>
+      <div className="relative w-full max-w-[1200px] mx-auto select-none my-8 group/carousel flex items-center justify-between px-2 md:px-8 gap-2 md:gap-8">
       
       {/* Navigation Button - Prev */}
       <div className="z-40 opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 transition-opacity duration-300 shrink-0">
@@ -212,15 +306,13 @@ export default function HoverCarousel() {
         </button>
       </div>
 
-      {/* Mask applied container */}
+      {/* Mask applied container - Overflow removed so tooltips won't crop at extreme edges */}
       <div 
-        className="relative w-full max-w-4xl aspect-square overflow-hidden shrink"
-        style={{ 
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 10%, black 100%)',
-          WebkitMaskComposite: 'intersect',
-          maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 10%, black 100%)',
-          maskComposite: 'intersect'
-        }}
+        ref={containerRef}
+        className="relative w-full max-w-4xl aspect-square shrink cursor-none"
+        onPointerEnter={() => setIsHovering(true)}
+        onPointerLeave={() => { setIsHovering(false); setHoverTarget(null); cursorX.set(-100); cursorY.set(-100); }}
+        onPointerMove={handlePointerMove}
       >
         <AnimatePresence mode="wait">
           <motion.div 
@@ -235,6 +327,12 @@ export default function HoverCarousel() {
               src={`/${currentImageId}.png`} 
               alt={currentImageId} 
               className="absolute inset-0 w-full h-full object-contain pointer-events-none" 
+              style={{ 
+                WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 10%, black 100%)',
+                WebkitMaskComposite: 'intersect',
+                maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 10%, black 100%)',
+                maskComposite: 'intersect'
+              }}
             />
 
             {/* Hover Polygons */}
@@ -256,6 +354,18 @@ export default function HoverCarousel() {
               const centerX = (minX + maxX) / 2;
               const centerY = (minY + maxY) / 2;
 
+              // Adjust translation based on position to avoid clipping
+              let translateX = "-translate-x-1/2";
+              if (centerX > 75) translateX = "-translate-x-full";
+              else if (centerX < 25) translateX = "translate-x-0";
+
+              let translateY = "-translate-y-1/2";
+              if (centerY > 85) translateY = "-translate-y-full";
+
+              // Determine if this person is Raj Shamani, to avoid drawing a line to himself
+              const isHost = info.name === "Raj Shamani";
+              const canDrawWire = !isHost && hostCenterX !== null && hostCenterY !== null;
+              
               // Use anchor tag wrap
               return (
                 <div key={idx} className="absolute inset-0 w-full h-full pointer-events-none z-30 group">
@@ -270,11 +380,13 @@ export default function HoverCarousel() {
                          e.preventDefault();
                        }
                     }}
+                    onPointerEnter={() => setHoverTarget(poly.label)}
+                    onPointerLeave={() => setHoverTarget(null)}
                   />
                   
                   {/* Tooltip */}
                   <div 
-                    className="absolute pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 z-50 px-4 py-3 bg-[#0f0f0f]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#d8b068]/30 flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2 scale-95 group-hover:scale-100 min-w-[200px] text-center"
+                    className={`absolute pointer-events-none transition-all duration-300 z-50 px-4 py-3 bg-[#0f0f0f]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#d8b068]/30 flex flex-col items-center justify-center transform ${translateX} ${translateY} min-w-[200px] text-center w-max mt-6 ${hoverTarget === poly.label ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
                     style={{ left: `${centerX}%`, top: `${centerY}%` }}
                   >
                     <span className="font-bold text-[#d8b068] whitespace-nowrap text-lg leading-tight">{info.name}</span>
@@ -291,6 +403,55 @@ export default function HoverCarousel() {
             })}
           </motion.div>
         </AnimatePresence>
+
+        {/* Global Dynamic Connected Physics Wire */}
+        <svg 
+          className={`absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible transition-opacity duration-500 ${isHovering && (!hoverTarget || currentInfoMap[hoverTarget]?.name !== "Raj Shamani") ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {/* True detached 3D droop shadow pushing heavily downwards relative to wire */}
+          <motion.path 
+            d={dynPath}
+            fill="none"
+            stroke="#000000"
+            strokeWidth="5"
+            strokeLinecap="round"
+            style={{ transform: "translateY(16px)", opacity: 0.5, filter: "blur(4px)" }}
+          />
+          {/* Inner bright wire */}
+          <motion.path 
+            d={dynPath}
+            fill="none"
+            stroke="#ef4444"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            style={{ filter: "drop-shadow(0 0 6px rgba(239, 68, 68, 0.9))" }}
+          />
+        </svg>
+
+        {/* Global Raj Shamani Target Dot */}
+        <div 
+          className={`absolute pointer-events-none z-40 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ${isHovering && (!hoverTarget || currentInfoMap[hoverTarget]?.name !== "Raj Shamani") ? 'opacity-100' : 'opacity-0'}`}
+          style={{ left: `${hostCenterX}%`, top: `${hostCenterY}%` }}
+        >
+          <div className="w-3 h-3 bg-red-500 rounded-full shadow-[0_0_15px_#ef4444] animate-ping" />
+          <div className="absolute inset-0 w-3 h-3 bg-red-500 rounded-full shadow-[0_0_15px_#ef4444]" />
+        </div>
+
+        {/* Custom fluid cursor inside the image bounds */}
+        {(() => {
+          const isHoveringOtherPerson = hoverTarget && currentInfoMap[hoverTarget]?.name !== "Raj Shamani";
+          const cursorBorderWrapper = isHoveringOtherPerson ? "border-red-500/60 shadow-[0_0_25px_rgba(239,68,68,0.5)]" : "border-[#d8b068]/60 shadow-[0_0_25px_rgba(216,176,104,0.3)]";
+          const cursorDot = isHoveringOtherPerson ? "bg-red-500 shadow-[0_0_8px_#ef4444]" : "bg-[#d8b068] shadow-[0_0_8px_#d8b068]";
+
+          return (
+            <motion.div 
+              className={`absolute top-0 left-0 z-50 pointer-events-none w-10 h-10 rounded-full border bg-black/10 backdrop-blur-sm flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 transition-colors duration-500 ${cursorBorderWrapper}`}
+              style={{ x: cursorXSpring, y: cursorYSpring, opacity: isHovering ? 1 : 0, scale: isHovering ? 1 : 0.8 }}
+            >
+              <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${cursorDot}`}></div>
+            </motion.div>
+          );
+        })()}
       </div>
 
       {/* Navigation Button - Next */}
@@ -304,5 +465,6 @@ export default function HoverCarousel() {
       </div>
       
     </div>
+    </>
   );
 }
