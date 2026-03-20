@@ -46,7 +46,7 @@ function StepBackground({ scrollYProgress, index, total, img, title }: {
   const opacity = useTransform(
     scrollYProgress,
     [Math.max(0, start - 0.05), Math.min(1, start), Math.min(1, end - 0.05), Math.min(1, end)],
-    [0, 1, 1, index === total - 1 ? 1 : 0]
+    [index === 0 ? 1 : 0, 1, 1, index === total - 1 ? 1 : 0]
   );
   const scale = useTransform(scrollYProgress, [start, end], [1.05, 1.12]);
 
@@ -77,12 +77,12 @@ function StepCard({ scrollYProgress, index, total, step }: {
   const opacity = useTransform(
     scrollYProgress,
     [Math.max(0, start - 0.04), Math.min(1, start + 0.04), Math.min(1, end - 0.04), Math.min(1, end)],
-    [0, 1, 1, index === total - 1 ? 1 : 0]
+    [index === 0 ? 1 : 0, 1, 1, index === total - 1 ? 1 : 0]
   );
   const y = useTransform(
     scrollYProgress,
     [Math.max(0, start - 0.04), Math.min(1, start + 0.04), Math.min(1, end - 0.04), Math.min(1, end)],
-    [40, 0, 0, index === total - 1 ? 0 : -40]
+    [index === 0 ? 0 : 40, 0, 0, index === total - 1 ? 0 : -40]
   );
 
   return (
@@ -134,7 +134,7 @@ function StepNav({ scrollYProgress, index, total, step }: {
   const opacity = useTransform(
     scrollYProgress, 
     [Math.max(0, start - 0.02), Math.min(1, start + 0.08), Math.min(1, end - 0.08), Math.min(1, end)], 
-    [0.25, 1, 1, index === total - 1 ? 1 : 0.25]
+    [index === 0 ? 1 : 0.25, 1, 1, index === total - 1 ? 1 : 0.25]
   );
   const scaleX = useTransform(scrollYProgress, [start, end], [0, 1]);
 
@@ -161,7 +161,7 @@ export default function OriginStory() {
     <section
       ref={containerRef}
       className="relative bg-black"
-      style={{ height: `${steps.length * 100}vh` }}
+      style={{ height: `${(steps.length + 1) * 100}vh` }}
     >
       {/* Sticky viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">

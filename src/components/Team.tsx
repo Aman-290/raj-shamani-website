@@ -13,6 +13,20 @@ export default function Team() {
       twitterUrl: "https://twitter.com",
     },
     {
+      name: "Apoorv Bhatnagar",
+      title: "Co-Founder, CREW",
+      description: "A prominent figure managing brand partnerships and talent management. As the force behind the podcast, he architects brand integrations and storytelling partnerships, playing a critical role in transforming 'Figuring Out' into a major media company.",
+      imageUrl: "/Approv bhatgnar.jpg",
+      linkedinUrl: "https://linkedin.com",
+    },
+    {
+      name: "Aqueel Syed",
+      title: "Founder's Office, Figuring Out Media",
+      description: "An AIESEC alumnus known for operating with speed and precision. He handles operational, hiring, and high-pressure strategic tasks, driving the growth of the media company alongside Raj.",
+      imageUrl: "/Aqueel.jpg",
+      linkedinUrl: "https://linkedin.com",
+    },
+    {
       name: "Anik Jain",
       title: "Brand Architect, DZ!NR",
       description: "The visual psychology and branding behind his content and House of X are heavily shaped by Anik Jain. He acts as a graphic designer and brand architect, ensuring every visual piece is deeply connected with the audience's psychology.",

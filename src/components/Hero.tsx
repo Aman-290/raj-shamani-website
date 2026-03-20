@@ -9,8 +9,8 @@ export default function Hero() {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Map mouse Y from top-to-bottom of screen into a -50px to +50px range
-      const normalized = (e.clientY / window.innerHeight - 0.5) * 100;
+      // Map mouse Y heavily reduced for a very slight spring action
+      const normalized = (e.clientY / window.innerHeight - 0.5) * 15;
       rawY.set(normalized);
     };
     window.addEventListener('mousemove', handleMouseMove);
@@ -23,7 +23,7 @@ export default function Hero() {
       
       {/* Left Mic: outer = idle idle breathe, inner = lazy spring mouse follow */}
       <motion.div
-        className="absolute -left-10 md:-left-20 lg:-left-28 top-24 md:top-36 lg:top-40 w-72 md:w-[420px] lg:w-[580px] z-30 pointer-events-none"
+        className="absolute -left-20 md:-left-32 lg:-left-40 top-40 md:top-52 lg:top-72 w-80 md:w-[480px] lg:w-[640px] z-30 pointer-events-none"
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -42,7 +42,7 @@ export default function Hero() {
       <motion.img 
         src="/raj-shamni.png" 
         alt="Raj Shamani" 
-        className="absolute -right-10 md:-right-24 lg:-right-32 xl:-right-48 -top-4 md:-top-12 xl:-top-24 w-80 md:w-[500px] lg:w-[700px] xl:w-[900px] opacity-60 xl:opacity-80 z-0 object-contain pointer-events-none"
+        className="absolute -right-32 md:-right-48 lg:-right-[220px] xl:-right-[320px] top-4 md:-top-4 xl:-top-24 w-[350px] md:w-[600px] lg:w-[800px] xl:w-[1000px] opacity-60 xl:opacity-80 z-0 object-contain pointer-events-none"
         style={{ maskImage: 'linear-gradient(to left, black 50%, transparent)', WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent)' }}
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
